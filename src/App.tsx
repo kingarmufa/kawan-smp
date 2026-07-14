@@ -79,7 +79,7 @@ export default function App() {
 
   // Fetch Developer Configuration from API
   useEffect(() => {
-    fetch("https://raw.githubusercontent.com/mcpeserver/MyAPI/main/config.json")
+    fetch("https://github.com/kingarmufa/Tes/blob/main/config.json")
       .then((res) => {
         if (!res.ok) throw new Error("Gagal mengambil data developer.");
         return res.json();
