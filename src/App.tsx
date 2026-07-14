@@ -62,7 +62,7 @@ const FALLBACK_DEV_CONFIG: DeveloperConfig = {
   community: {
     name: "SERVER KOMUNITAS",
     website: "https://web.kawansmp.my.id",
-    whatsapp Group: "https://discord.gg/9KUN2byKRM"
+    whatsapp: "https://chat.whatsapp.com/BF1KRxLOvk86EvyP8vmrKc"
   },
   website: {
     portfolio: "https://sfl.gl/x2ic"
