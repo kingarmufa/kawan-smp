@@ -54,15 +54,15 @@ interface DeveloperConfig {
 }
 
 const FALLBACK_DEV_CONFIG: DeveloperConfig = {
-  name: "Ran Dev",
+  name: "KING ARYA",
   contact: {
     phone: "0895602592430",
     whatsapp: "0895602592430"
   },
   community: {
-    name: "Ran Dev Community",
-    website: "https://community.randev.com",
-    discord: "https://discord.gg/9KUN2byKRM"
+    name: "SERVER KOMUNITAS",
+    website: "https://web.kawansmp.my.id",
+    whatsapp Group: "https://discord.gg/9KUN2byKRM"
   },
   website: {
     portfolio: "https://sfl.gl/x2ic"
