@@ -79,7 +79,7 @@ export default function App() {
 
   // Fetch Developer Configuration from API
   useEffect(() => {
-    fetch("https://raw.githubusercontent.com/kingarmufa/Tes/refs/heads/main/config.json")
+    fetch("https://raw.githubusercontent.com/mcpeserver/MyAPI/main/config.json")
       .then((res) => {
         if (!res.ok) throw new Error("Gagal mengambil data developer.");
         return res.json();
@@ -145,7 +145,7 @@ export default function App() {
 
   // Copy IP handler
   const handleCopyIP = () => {
-    navigator.clipboard.writeText("supernova.armufa.my.id");
+    navigator.clipboard.writeText("play.kawansmp.my.id");
     setCopied(true);
     setShowNotification(true);
     setTimeout(() => {
@@ -618,7 +618,7 @@ export default function App() {
                         <label className="text-[9px] text-text-muted font-bold font-mono tracking-widest uppercase">ALAMAT IP SERVER</label>
                         <div className="flex items-center justify-between p-3 rounded-xl bg-card border border-white/15">
                           <span className="font-mono text-xs md:text-sm font-semibold tracking-wider text-accent select-all">
-                            supernova.armufa.my.id
+                            play.kawansmp.my.id
                           </span>
                           <div className="text-[9px] px-2 py-0.5 rounded bg-white/5 font-mono text-white">JAVA</div>
                         </div>
@@ -877,7 +877,7 @@ export default function App() {
             </div>
             <div>
               <h4 className="font-heading font-bold text-xs text-white">Berhasil Disalin!</h4>
-              <p className="text-[10px] text-text-muted">IP supernova.armufa.my.id berhasil disalin.</p>
+              <p className="text-[10px] text-text-muted">IP play.kawansmp.my.id berhasil disalin.</p>
             </div>
           </motion.div>
         )}
