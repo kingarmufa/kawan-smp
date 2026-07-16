@@ -1,0 +1,6 @@
+{
+  "name": "KAWAN SMP",
+  "description": "Landing page premium, cinematic, dan responsif untuk server Minecraft Indonesia KAWAN SMP.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
