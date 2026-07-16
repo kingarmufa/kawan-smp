@@ -1,0 +1,91 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Silkscreen:wght@400;700&family=Space+Grotesk:wght@500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-heading: "Plus Jakarta Sans", "Space Grotesk", sans-serif;
+  --font-minecraft: "Silkscreen", monospace;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Theme colors */
+  --color-primary: #2E8BFF;
+  --color-secondary: #6BBEFF;
+  --color-accent: #A9E8FF;
+  --color-bg-main: #0D111B;
+  --color-surface: #161C2C;
+  --color-card: #1F2638;
+  --color-border-custom: rgba(255,255,255,0.08);
+  --color-text-muted: #C7CDD8;
+  --color-success: #46D37A;
+  --color-warning: #FFC857;
+  --color-danger: #FF6464;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-bg-main);
+    color: #FFFFFF;
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+  }
+
+  /* Smooth scroll */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0D111B;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #1F2638;
+    border-radius: 4px;
+    border: 2px solid #0D111B;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #2E8BFF;
+  }
+}
+
+/* Glassmorphism utility */
+.glass {
+  background: rgba(22, 28, 44, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-nav {
+  background: rgba(13, 17, 27, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Float animation */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Subtle glow */
+.subtle-glow {
+  box-shadow: 0 0 25px -5px rgba(46, 139, 255, 0.15);
+}
+
+.subtle-glow-lg {
+  box-shadow: 0 0 40px -10px rgba(46, 139, 255, 0.25);
+}
+
