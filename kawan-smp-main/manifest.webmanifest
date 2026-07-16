@@ -1,0 +1,17 @@
+{
+  "name": "KAWAN SMP",
+  "short_name": "KAWAN SMP",
+  "description": "Server Survival RPG & Economy Minecraft Indonesia",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0D111B",
+  "theme_color": "#2E8BFF",
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/mcpeserver/MyAPI/main/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
