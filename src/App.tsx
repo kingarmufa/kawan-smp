@@ -30,7 +30,10 @@ import {
   ArrowRight,
   ChevronDown,
   Info,
-  Smartphone
+  Smartphone,
+  Trophy,
+  RefreshCw,
+  WifiOff
 } from "lucide-react";
 
 // Import images from generated asset paths
@@ -54,15 +57,15 @@ interface DeveloperConfig {
 }
 
 const FALLBACK_DEV_CONFIG: DeveloperConfig = {
-  name: "KING ARYA",
+  name: "Ran Dev",
   contact: {
     phone: "0895602592430",
     whatsapp: "0895602592430"
   },
   community: {
-    name: "SERVER KOMUNITAS",
-    website: "https://web.kawansmp.my.id",
-    whatsapp: "https://chat.whatsapp.com/BF1KRxLOvk86EvyP8vmrKc"
+    name: "Ran Dev Community",
+    website: "https://community.randev.com",
+    discord: "https://discord.gg/9KUN2byKRM"
   },
   website: {
     portfolio: "https://sfl.gl/x2ic"
@@ -77,9 +80,13 @@ export default function App() {
   const [activeSection, setActiveSection] = useState("beranda");
   const [isScrolled, setIsScrolled] = useState(false);
 
+  // Live server status & player count state
+  const [serverStatus, setServerStatus] = useState<"loading" | "online" | "offline">("loading");
+  const [playerCount, setPlayerCount] = useState<{ online: number; max: number }>({ online: 0, max: 0 });
+
   // Fetch Developer Configuration from API
   useEffect(() => {
-    fetch("https://github.com/kingarmufa/Tes/blob/main/config.json")
+    fetch("https://raw.githubusercontent.com/mcpeserver/MyAPI/main/config.json")
       .then((res) => {
         if (!res.ok) throw new Error("Gagal mengambil data developer.");
         return res.json();
@@ -101,6 +108,41 @@ export default function App() {
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Fetch Live Server Status & Player Count (Bedrock: supernova.armufa.my.id:24061)
+  useEffect(() => {
+    const SERVER_IP = "supernova.armufa.my.id";
+    const SERVER_PORT = 24061;
+
+    const fetchServerStatus = () => {
+      fetch(`https://api.mcsrvstat.us/bedrock/3/${SERVER_IP}:${SERVER_PORT}`)
+        .then((res) => {
+          if (!res.ok) throw new Error("Gagal memeriksa status server.");
+          return res.json();
+        })
+        .then((data) => {
+          if (data && data.online) {
+            setServerStatus("online");
+            setPlayerCount({
+              online: data.players?.online ?? 0,
+              max: data.players?.max ?? 0
+            });
+          } else {
+            setServerStatus("offline");
+            setPlayerCount({ online: 0, max: 0 });
+          }
+        })
+        .catch(() => {
+          setServerStatus("offline");
+          setPlayerCount({ online: 0, max: 0 });
+        });
+    };
+
+    fetchServerStatus();
+    // Refresh status setiap 60 detik agar data tetap up-to-date
+    const interval = setInterval(fetchServerStatus, 60000);
+    return () => clearInterval(interval);
   }, []);
 
   // Dynamic SEO, Favicon, & Open Graph Meta Tags Injection
@@ -145,7 +187,7 @@ export default function App() {
 
   // Copy IP handler
   const handleCopyIP = () => {
-    navigator.clipboard.writeText("play.kawansmp.my.id");
+    navigator.clipboard.writeText("supernova.armufa.my.id");
     setCopied(true);
     setShowNotification(true);
     setTimeout(() => {
@@ -158,6 +200,7 @@ export default function App() {
     { id: "beranda", label: "Beranda" },
     { id: "server", label: "Server" },
     { id: "fitur", label: "Fitur" },
+    { id: "rewards", label: "Rewards" },
     { id: "rules", label: "Rules" },
     { id: "tim", label: "Tim" },
     { id: "download", label: "Download" }
@@ -509,11 +552,25 @@ export default function App() {
 
                 {/* QUICK INFO SECTION */}
                 <section className="relative py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                  <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 md:gap-6">
                     {[
                       { label: "MODE SERVER", value: "RPG & Economy", icon: Sword, color: "text-primary" },
                       { label: "PLATFORM", value: "Java & Bedrock", icon: Laptop, color: "text-secondary" },
-                      { label: "STATUS SERVER", value: "Online", icon: Server, color: "text-success", badge: true },
+                      {
+                        label: "STATUS SERVER",
+                        value: serverStatus === "loading" ? "Memeriksa..." : serverStatus === "online" ? "Online" : "Offline",
+                        icon: serverStatus === "offline" ? WifiOff : Server,
+                        color: serverStatus === "online" ? "text-success" : serverStatus === "offline" ? "text-danger" : "text-text-muted",
+                        badge: true,
+                        badgeText: serverStatus === "loading" ? "Cek..." : serverStatus === "online" ? "Aktif" : "Nonaktif",
+                        badgeColor: serverStatus === "online" ? "bg-success/15 text-success border-success/30" : serverStatus === "offline" ? "bg-danger/15 text-danger border-danger/30" : "bg-white/5 text-text-muted border-white/10"
+                      },
+                      {
+                        label: "PEMAIN ONLINE",
+                        value: serverStatus === "online" ? `${playerCount.online}${playerCount.max ? ` / ${playerCount.max}` : ""}` : "-",
+                        icon: Users,
+                        color: "text-accent"
+                      },
                       { label: "RILIS SERVER", value: "Minggu, 10 Mei 2026", icon: Calendar, color: "text-warning" }
                     ].map((info, idx) => {
                       const IconComponent = info.icon;
@@ -523,7 +580,7 @@ export default function App() {
                           className="glass rounded-[24px] p-5 flex items-start space-x-3.5 hover:border-white/15 transition-all duration-300 subtle-glow"
                         >
                           <div className={`p-3 rounded-xl bg-white/5 ${info.color} shrink-0`}>
-                            <IconComponent className="w-5 h-5" />
+                            <IconComponent className={`w-5 h-5 ${serverStatus === "loading" && info.label === "STATUS SERVER" ? "animate-spin" : ""}`} />
                           </div>
                           <div>
                             <span className="block text-[9px] text-text-muted font-bold font-mono tracking-widest uppercase mb-1">
@@ -534,8 +591,8 @@ export default function App() {
                                 <span className="font-heading font-extrabold text-sm md:text-base text-white">
                                   {info.value}
                                 </span>
-                                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[8px] font-bold bg-success/15 text-success border border-success/30 uppercase animate-pulse">
-                                  Aktif
+                                <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[8px] font-bold border uppercase ${info.badgeColor} ${serverStatus === "online" ? "animate-pulse" : ""}`}>
+                                  {info.badgeText}
                                 </span>
                               </div>
                             ) : (
@@ -549,6 +606,7 @@ export default function App() {
                     })}
                   </div>
                 </section>
+
 
                 {/* CTA BERGABUNG */}
                 <section className="py-20 relative overflow-hidden">
@@ -593,6 +651,32 @@ export default function App() {
                     Hubungkan Game Milikmu Sekarang
                   </h2>
                   <div className="w-12 h-1 bg-gradient-to-r from-primary to-secondary mx-auto mt-4 rounded-full" />
+
+                  {/* Live Status & Player Count Badge */}
+                  <div className="flex items-center justify-center flex-wrap gap-3 mt-6">
+                    <div className={`inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full border text-[11px] font-bold uppercase tracking-wide ${
+                      serverStatus === "online"
+                        ? "bg-success/10 text-success border-success/30"
+                        : serverStatus === "offline"
+                        ? "bg-danger/10 text-danger border-danger/30"
+                        : "bg-white/5 text-text-muted border-white/10"
+                    }`}>
+                      {serverStatus === "loading" ? (
+                        <RefreshCw className="w-3 h-3 animate-spin" />
+                      ) : (
+                        <span className={`w-2 h-2 rounded-full ${serverStatus === "online" ? "bg-success animate-pulse" : "bg-danger"}`} />
+                      )}
+                      <span>
+                        {serverStatus === "loading" ? "Memeriksa Status..." : serverStatus === "online" ? "Server Online" : "Server Offline"}
+                      </span>
+                    </div>
+                    {serverStatus === "online" && (
+                      <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full border border-white/10 bg-white/5 text-[11px] font-bold uppercase tracking-wide text-accent">
+                        <Users className="w-3.5 h-3.5" />
+                        <span>{playerCount.online}{playerCount.max ? ` / ${playerCount.max}` : ""} Pemain Online</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 <div className="glass rounded-[24px] p-6 md:p-10 max-w-3xl mx-auto relative overflow-hidden subtle-glow-lg border border-white/10">
@@ -618,7 +702,7 @@ export default function App() {
                         <label className="text-[9px] text-text-muted font-bold font-mono tracking-widest uppercase">ALAMAT IP SERVER</label>
                         <div className="flex items-center justify-between p-3 rounded-xl bg-card border border-white/15">
                           <span className="font-mono text-xs md:text-sm font-semibold tracking-wider text-accent select-all">
-                            play.kawansmp.my.id
+                            supernova.armufa.my.id
                           </span>
                           <div className="text-[9px] px-2 py-0.5 rounded bg-white/5 font-mono text-white">JAVA</div>
                         </div>
@@ -667,7 +751,8 @@ export default function App() {
                     { title: "Sistem Keuangan", desc: "Simpan, kelola, dan investasikan dana servermu secara mandiri melalui bank server teraman untuk mengamankan aset pribadi.", icon: Wallet, color: "text-warning" },
                     { title: "Survival Hardcore", desc: "Tantang batasan kemampuan bertahan hidupmu di dunia survival yang tangguh dan monster-monster yang lebih agresif.", icon: Flame, color: "text-danger" },
                     { title: "Bansos Harian", desc: "Klaim bantuan sosial (bansos) harian berupa perlengkapan dasar gratis untuk membantumu berkembang lebih cepat.", icon: Gift, color: "text-success" },
-                    { title: "Gacha Gratis", desc: "Gunakan kupon gacha yang diperoleh dari aktivitas game untuk memenangkan item langka dan koin bonus tanpa bayar.", icon: Sparkles, color: "text-purple-400" }
+                    { title: "Gacha Gratis", desc: "Gunakan kupon gacha yang diperoleh dari aktivitas game untuk memenangkan item langka dan koin bonus tanpa bayar.", icon: Sparkles, color: "text-purple-400" },
+                    { title: "Klaim /rewards", desc: "Ketik perintah /rewards di dalam game untuk membuka menu reward harian, vote, dan playtime demi mendapatkan reward gede secara gratis.", icon: Trophy, color: "text-yellow-400" }
                   ].map((feat, idx) => {
                     const IconComp = feat.icon;
                     return (
@@ -690,6 +775,66 @@ export default function App() {
                       </div>
                     );
                   })}
+                </div>
+              </section>
+            )}
+
+            {/* REWARDS SECTION */}
+            {activeSection === "rewards" && (
+              <section className="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="text-center max-w-3xl mx-auto mb-12">
+                  <span className="text-primary text-xs font-bold font-mono tracking-widest uppercase block mb-2">CARA MENDAPATKAN REWARD</span>
+                  <h2 className="text-2xl md:text-4xl font-heading font-extrabold tracking-tight text-white">
+                    Klaim Reward Gede Lewat /rewards
+                  </h2>
+                  <div className="w-12 h-1 bg-gradient-to-r from-primary to-secondary mx-auto mt-4 rounded-full" />
+                  <p className="text-text-muted text-xs md:text-sm max-w-xl mx-auto mt-5 font-medium leading-relaxed">
+                    Cukup ketik perintah <span className="text-accent font-mono font-bold">/rewards</span> di dalam game untuk membuka menu reward. Semakin aktif dan konsisten kamu bermain, semakin besar reward yang bisa kamu klaim!
+                  </p>
+                </div>
+
+                {/* Command highlight */}
+                <div className="glass rounded-[24px] p-6 md:p-8 max-w-2xl mx-auto mb-10 border border-white/10 subtle-glow-lg text-center">
+                  <span className="text-[9px] text-text-muted font-bold font-mono tracking-widest uppercase block mb-3">KETIK PERINTAH INI DI CHAT GAME</span>
+                  <div className="inline-flex items-center space-x-2 px-5 py-3 rounded-xl bg-card border border-primary/30 font-mono text-base md:text-lg font-extrabold text-primary select-all">
+                    <Trophy className="w-5 h-5" />
+                    <span>/rewards</span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {[
+                    { step: "01", title: "Login Harian", desc: "Buka menu /rewards setiap hari untuk klaim reward login. Semakin panjang streak login berturut-turut, semakin besar reward yang kamu dapat.", icon: Calendar, color: "text-primary" },
+                    { step: "02", title: "Vote Server", desc: "Vote KAWAN SMP di situs vote resmi, lalu ketik /rewards untuk klaim koin, item langka, dan booster dari hasil vote-mu.", icon: ExternalLink, color: "text-secondary" },
+                    { step: "03", title: "Playtime Reward", desc: "Habiskan waktu bermain di server untuk membuka reward otomatis berdasarkan jam bermain, cukup cek /rewards secara berkala.", icon: Server, color: "text-accent" },
+                    { step: "04", title: "Reward Spesial", desc: "Ikuti event dan pencapaian tertentu di server untuk membuka reward eksklusif bernilai tinggi lewat menu /rewards.", icon: Gift, color: "text-yellow-400" }
+                  ].map((item, idx) => {
+                    const IconComp = item.icon;
+                    return (
+                      <div
+                        key={idx}
+                        className="glass rounded-[24px] p-6 flex flex-col hover:border-white/15 hover:bg-card/40 transition-all duration-300 subtle-glow group relative overflow-hidden"
+                      >
+                        <span className="absolute top-4 right-5 text-3xl font-heading font-extrabold text-white/5 select-none">{item.step}</span>
+                        <div className={`p-3 rounded-xl bg-white/5 w-fit ${item.color} group-hover:scale-110 transition-all duration-300`}>
+                          <IconComp className="w-5.5 h-5.5" />
+                        </div>
+                        <h3 className="font-heading font-extrabold text-base text-white mt-5 mb-2.5">
+                          {item.title}
+                        </h3>
+                        <p className="text-text-muted text-xs leading-relaxed font-medium">
+                          {item.desc}
+                        </p>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div className="max-w-3xl mx-auto mt-10 glass rounded-2xl p-5 flex items-start space-x-3 border border-warning/20 bg-warning/5">
+                  <Info className="w-5 h-5 text-warning shrink-0 mt-0.5" />
+                  <p className="text-text-muted text-xs leading-relaxed font-medium">
+                    Tips: Klaim /rewards secara rutin tiap hari agar streak-mu tidak reset, karena reward gede biasanya baru terbuka setelah streak login mencapai jumlah hari tertentu.
+                  </p>
                 </div>
               </section>
             )}
@@ -877,7 +1022,7 @@ export default function App() {
             </div>
             <div>
               <h4 className="font-heading font-bold text-xs text-white">Berhasil Disalin!</h4>
-              <p className="text-[10px] text-text-muted">IP play.kawansmp.my.id berhasil disalin.</p>
+              <p className="text-[10px] text-text-muted">IP supernova.armufa.my.id berhasil disalin.</p>
             </div>
           </motion.div>
         )}
